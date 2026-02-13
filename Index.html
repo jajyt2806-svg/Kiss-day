@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Jessy Ultimate Kiss Day</title>
+<style>
+body{
+  margin:0;
+  height:100vh;
+  overflow:hidden;
+  background:linear-gradient(135deg,#ff6a88,#ff99ac);
+  font-family:Arial,sans-serif;
+  text-align:center;
+  color:white;
+}
+.container{
+  position:relative;
+  top:15%;
+  z-index:2;
+}
+h1{
+  font-size:42px;
+  animation:glow 2s infinite alternate;
+}
+#message{
+  font-size:20px;
+  min-height:60px;
+  margin:15px;
+  white-space:pre-line;
+}
+button{
+  padding:10px 20px;
+  font-size:18px;
+  border:none;
+  border-radius:25px;
+  background:white;
+  color:#ff4b8b;
+  cursor:pointer;
+}
+#score{
+  position:absolute;
+  top:10px;
+  right:20px;
+  font-size:20px;
+}
+#timer{
+  position:absolute;
+  top:10px;
+  left:20px;
+  font-size:20px;
+}
+.heart{
+  position:absolute;
+  bottom:-50px;
+  font-size:25px;
+  animation:float 6s linear infinite;
+}
+.kiss{
+  position:absolute;
+  font-size:40px;
+  cursor:pointer;
+  animation:fall linear forwards;
+}
+#finalMessage{
+  position:fixed;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  background:white;
+  color:#ff4b8b;
+  padding:20px 30px;
+  border-radius:20px;
+  font-size:24px;
+  display:none;
+}
+.firework{
+  position:absolute;
+  font-size:30px;
+  animation:explode 1s ease forwards;
+}
+#secret{
+  position:fixed;
+  bottom:10px;
+  left:50%;
+  transform:translateX(-50%);
+  font-size:14px;
+  opacity:0.3;
+}
+@keyframes glow{
+  from{text-shadow:0 0 10px #fff;}
+  to{text-shadow:0 0 25px #ffccff;}
+}
+@keyframes float{
+  from{transform:translateY(0);}
+  to{transform:translateY(-110vh);}
+}
+@keyframes fall{
+  from{transform:translateY(-50px);}
+  to{transform:translateY(110vh);}
+}
+@keyframes explode{
+  0%{transform:scale(0);opacity:1;}
+  50%{transform:scale(2);opacity:1;}
+  100%{transform:scale(1);opacity:0;}
+}
+</style>
+</head>
+<body>
+
+<div id="timer">⏳ 60</div>
+<div id="score">💋 0</div>
+
+<div class="container">
+  <h1>💋 Happy Kiss Day Jessy ❤️</h1>
+  <div id="message"></div>
+  <button onclick="burstKiss()">Click for Love 💖</button>
+</div>
+
+<div id="finalMessage">💖 I Love You Jessy Forever 💖</div>
+<div id="secret">Tap here 5 times 😉</div>
+
+<script>
+/* Typewriter */
+const text="Jessy 💖\nOne small kiss, million feelings 😘\nYou are my forever happiness ❤️";
+let i=0;
+function typeWriter(){
+  if(i<text.length){
+    document.getElementById("message").innerHTML+=text.charAt(i);
+    i++;
+    setTimeout(typeWriter,50);
+  }
+}
+typeWriter();
+
+/* Floating Hearts */
+function createHeart(){
+  const h=document.createElement("div");
+  h.classList.add("heart");
+  h.innerHTML="💖";
+  h.style.left=Math.random()*100+"vw";
+  document.body.appendChild(h);
+  setTimeout(()=>h.remove(),6000);
+}
+setInterval(createHeart,500);
+
+/* Burst Effect */
+function burstKiss(){
+  for(let i=0;i<10;i++){
+    const k=document.createElement("div");
+    k.innerHTML="💋";
+    k.style.position="absolute";
+    k.style.left="50%";
+    k.style.top="50%";
+    k.style.transition="all 1s ease";
+    document.body.appendChild(k);
+    setTimeout(()=>{
+      k.style.left=Math.random()*100+"vw";
+      k.style.top=Math.random()*100+"vh";
+      k.style.opacity=0;
+    },10);
+    setTimeout(()=>k.remove(),1000);
+  }
+}
+
+/* Kiss Catch Game */
+let score=0;
+function createFallingKiss(){
+  const k=document.createElement("div");
+  k.classList.add("kiss");
+  k.innerHTML="💋";
+  k.style.left=Math.random()*100+"vw";
+  k.style.animationDuration=(3+Math.random()*2)+"s";
+  k.onclick=function(){
+    score++;
+    document.getElementById("score").innerHTML="💋 "+score;
+    k.remove();
+    if(score===20){
+      showFinal();
+    }
+  };
+  document.body.appendChild(k);
+  setTimeout(()=>k.remove(),5000);
+}
+setInterval(createFallingKiss,1000);
+
+/* Final Popup + Fireworks */
+function showFinal(){
+  document.getElementById("finalMessage").style.display="block";
+  for(let i=0;i<20;i++){
+    const f=document.createElement("div");
+    f.classList.add("firework");
+    f.innerHTML="✨";
+    f.style.left=Math.random()*100+"vw";
+    f.style.top=Math.random()*100+"vh";
+    document.body.appendChild(f);
+    setTimeout(()=>f.remove(),1000);
+  }
+}
+
+/* Countdown Timer */
+let time=60;
+const timer=setInterval(()=>{
+  time--;
+  document.getElementById("timer").innerHTML="⏳ "+time;
+  if(time<=0){
+    clearInterval(timer);
+    showFinal();
+  }
+},1000);
+
+/* Secret Hidden Message */
+let tap=0;
+document.getElementById("secret").onclick=function(){
+  tap++;
+  if(tap===5){
+    alert("💌 Secret Message:\nJessy, you are my destiny ❤️");
+  }
+};
+</script>
+
+</body>
+</html>
