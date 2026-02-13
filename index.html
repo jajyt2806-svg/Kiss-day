@@ -1,47 +1,74 @@
-    <!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Kiss Catch for Jessy</title>
+<title>Happy Kiss Day Jessy</title>
 <style>
 body{
   margin:0;
-  overflow:hidden;
   height:100vh;
+  overflow:hidden;
   background:linear-gradient(135deg,#ff7eb3,#ff758c);
   font-family:Arial,sans-serif;
   text-align:center;
   color:white;
 }
 
-h1{
-  margin-top:20px;
+#intro{
+  position:absolute;
+  top:30%;
+  width:100%;
 }
 
-#score{
-  position:absolute;
-  top:10px;
-  right:20px;
-  font-size:20px;
+h1{ font-size:36px; }
+
+#message{
+  margin:15px;
+  font-size:18px;
 }
 
-#timer{
+button{
+  padding:12px 25px;
+  font-size:18px;
+  border:none;
+  border-radius:25px;
+  background:white;
+  color:#ff4b8b;
+  cursor:pointer;
+  margin-top:10px;
+}
+
+#score,#timer{
   position:absolute;
   top:10px;
-  left:20px;
-  font-size:20px;
+  font-size:18px;
+  display:none;
 }
+
+#score{ right:20px; }
+#timer{ left:20px; }
 
 .kiss{
   position:absolute;
-  font-size:40px;
+  font-size:50px;
   cursor:pointer;
   animation:fall linear forwards;
+  user-select:none;
 }
 
 @keyframes fall{
-  from{transform:translateY(-50px);}
-  to{transform:translateY(110vh);}
+  from{ transform:translateY(-60px); }
+  to{ transform:translateY(110vh); }
+}
+
+.pop{
+  animation:pop 0.2s ease;
+}
+
+@keyframes pop{
+  0%{ transform:scale(1); }
+  50%{ transform:scale(1.4); }
+  100%{ transform:scale(1); }
 }
 
 #end{
@@ -51,7 +78,7 @@ h1{
   transform:translate(-50%,-50%);
   background:white;
   color:#ff4b8b;
-  padding:20px 30px;
+  padding:25px 35px;
   border-radius:20px;
   display:none;
   font-size:22px;
@@ -60,53 +87,96 @@ h1{
 </head>
 <body>
 
-<h1>💋 Kiss Catch Jessy ❤️</h1>
+<div id="intro">
+  <h1>💋 Happy Kiss Day Jessy ❤️</h1>
+  <div id="message">
+    One small kiss, million feelings 😘<br>
+    Ready to catch my kisses? 💖
+  </div>
+  <button onclick="startGame()">Play – Catch My Kiss 💋</button>
+</div>
+
 <div id="score">Score: 0</div>
-<div id="timer">Time: 15</div>
-<div id="end"></div>
+<div id="timer">Time: 30</div>
+
+<div id="end">
+  <div id="finalText"></div>
+  <button onclick="restartGame()">Play Again 💖</button>
+</div>
 
 <script>
-let score = 0;
-let time = 15;
-let gameActive = true;
+let score, time, gameActive;
+let kissInterval, timerInterval;
 
-/* Timer */
-const timerInterval = setInterval(()=>{
-  time--;
-  document.getElementById("timer").innerHTML="Time: "+time;
+function startGame(){
+  score = 0;
+  time = 30;
+  gameActive = true;
 
-  if(time <= 0){
-    clearInterval(timerInterval);
-    gameActive = false;
-    document.getElementById("end").style.display="block";
-    document.getElementById("end").innerHTML=
-      "💖 Time Over Jessy! 💖<br>Total Kisses: "+score;
-  }
-},1000);
+  document.getElementById("intro").style.display="none";
+  document.getElementById("score").style.display="block";
+  document.getElementById("timer").style.display="block";
+  document.getElementById("score").innerHTML="Score: 0";
+  document.getElementById("timer").innerHTML="Time: 30";
 
-/* Create Falling Kiss */
+  timerInterval = setInterval(()=>{
+    time--;
+    document.getElementById("timer").innerHTML="Time: "+time;
+
+    if(time <= 0){
+      endGame();
+    }
+  },1000);
+
+  kissInterval = setInterval(createKiss,600);
+}
+
 function createKiss(){
   if(!gameActive) return;
 
   const kiss = document.createElement("div");
   kiss.classList.add("kiss");
   kiss.innerHTML="💋";
-  kiss.style.left=Math.random()*100+"vw";
+  kiss.style.left=Math.random()*90+"vw";
   kiss.style.animationDuration=(2+Math.random()*2)+"s";
 
-  kiss.onclick=function(){
+  function catchKiss(){
     if(!gameActive) return;
+
     score++;
     document.getElementById("score").innerHTML="Score: "+score;
-    kiss.remove();
-  };
+
+    kiss.classList.add("pop");
+
+    if(navigator.vibrate){
+      navigator.vibrate(50);
+    }
+
+    setTimeout(()=>kiss.remove(),150);
+  }
+
+  kiss.addEventListener("click", catchKiss);
+  kiss.addEventListener("touchstart", catchKiss);
 
   document.body.appendChild(kiss);
 
   setTimeout(()=>kiss.remove(),4000);
 }
 
-setInterval(createKiss,700);
+function endGame(){
+  gameActive = false;
+  clearInterval(timerInterval);
+  clearInterval(kissInterval);
+
+  document.getElementById("end").style.display="block";
+  document.getElementById("finalText").innerHTML=
+    "💖 Jessy! 💖<br>You caught "+score+" kisses 😘";
+}
+
+function restartGame(){
+  document.getElementById("end").style.display="none";
+  startGame();
+}
 </script>
 
 </body>
